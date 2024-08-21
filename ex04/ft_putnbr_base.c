@@ -12,8 +12,6 @@
 
 #include <unistd.h>
 
-void	ft_putnbr_base(int nbr, char *base);
-
 int	size(char *base)
 {
 	int	size;
@@ -28,14 +26,12 @@ int	duplicated(char *base)
 {
 	int	i;
 	int	j;
-	int	s;
 
-	s = size(base);
 	i = 0;
-	while (i < s)
+	while (i < size(base))
 	{
 		j = i + 1;
-		while (j < s)
+		while (j < size(base))
 		{
 			if (base[i] == base[j])
 				return (0);
@@ -48,9 +44,8 @@ int	duplicated(char *base)
 
 int	has_forbidden_characters(char *base)
 {
-	int	k;
+	int	k = 0;
 
-	k = 0;
 	while (base[k] != '\0')
 	{
 		if (base[k] == '+' || base[k] == '-' || base[k] == ' '
@@ -61,26 +56,56 @@ int	has_forbidden_characters(char *base)
 	return (1);
 }
 
-void	inside(unsigned int n, char *base, int sign)
+int	power_of_base(char *base, int exponent)
 {
-	unsigned int	base_size;
+	int	i = 1;
+	int	j = 0;
+	
+	while (j < exponent)
+	{
+		i = i * size(base);
+		j++;
+	}
+	return (i);
+}
 
-	base_size = size(base);
-	if ((unsigned int)(sign * n) > base_size - 1)
-		ft_putnbr_base((unsigned int)(sign * (n / base_size)), base);
-	write(1, &base[(unsigned int)(sign * (n % base_size))], 1);
+void	inside(int nbr, char *base)
+{
+	int a = 31;
+	int flag = 0;
+	char d;
+
+	while (a >= 0)
+	{
+		if (nbr / power_of_base(base, a) == 0 && flag == 0)
+		{
+			a--;
+			continue ;
+		}
+		else
+		{
+			flag = 1;
+			d = base[nbr / power_of_base(base, a)];
+			nbr = nbr % power_of_base(base, a);
+			write (1, &d, 1);
+			a--;
+		}
+	}
 }
 
 void	ft_putnbr_base(int nbr, char *base)
 {
-	if (size(base) < 2 || duplicated(base) == 0
-		|| has_forbidden_characters(base) == 0)
-		return ;
-	if (nbr < 0)
+	if (nbr == 0)
 	{
-		write(1, "-", 1);
-		inside(nbr, base, -1);
+		write (1, &base[0], 1);
+	}
+	else if (nbr < 0)
+	{
+		write (1, "-", 1);
+		ft_putnbr_base(-nbr, base);
 	}
 	else
-		inside(nbr, base, 1);
+	{
+		inside(nbr, base);
+	}
 }
