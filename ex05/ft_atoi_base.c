@@ -95,9 +95,20 @@ int	ft_atoi_base(char *str, char *base)
 			sign *= -1;
 		i++;
 	}
-	while (str[i] > ' ' && str[i] < 127)
+	while (str[i] != '\0')
 	{
-		digits_number++;
+		j = 0;
+		while (base[j] != '\0')
+		{
+			if (str[i] == base[j])
+			{
+				digits_number++;
+				break;
+			}
+			j++;
+		}
+		if (base[j] == '\0')
+			break;
 		i++;
 	}
 	while (digits_number > 0)
